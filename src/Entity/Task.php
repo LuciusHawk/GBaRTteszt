@@ -82,7 +82,11 @@ class Task
         }
     }
 
-    private function checkStatusMovementIsCorrect($status)
+    /**
+     * @param $status
+     * @return bool
+     */
+    protected function checkStatusMovementIsCorrect($status)
     {
         if (isset($this->status) && !empty($this->status)) {
             if ($this->status == 'NEW' && $status == 'INPROGRESS' ||

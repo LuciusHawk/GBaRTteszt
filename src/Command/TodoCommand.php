@@ -23,7 +23,10 @@ class TodoCommand extends Command
             ->setDescription('Manage TODO tasks')
             // the full command description shown when running the command with
             // the "--help" option
-            ->setHelp('Manage TODO tasks with console commands')
+            ->setHelp('Manage TODO tasks with console commands. 
+            List tasks: --mode=list . 
+            Create task: --mode=create "Description to task" . 
+            Update status: --mode=update-status ID "STATUS" (Status could be "NEW"|"INPROGRESS"|"ONHOLD"|"DONE")')
             ->addArgument(
                 'arguments',
                 InputArgument::IS_ARRAY | InputArgument::OPTIONAL,
@@ -42,10 +45,7 @@ class TodoCommand extends Command
     {
         $mode = $input->getOption('mode');
         $options = $input->getArgument('arguments');
-        var_dump($mode);
-        if (count($options) > 0) {
-            var_dump($options);
-        }
+
         switch ($mode) {
             case 'list':
                 $fileService = new FileService();
@@ -53,14 +53,10 @@ class TodoCommand extends Command
                 $this->printList($tasks);
                 break;
             case 'create':
-                echo 'Create this: '."\n";
-                if (count($options) > 0) {
-                    var_dump($options);
-                }
+                $this->createTask($options);
                 break;
             case 'update-status':
-                $mode = $input->getOption('mode');
-                var_dump($mode);
+                $this->updateStatus($options);
                 break;
             default:
                 $fileService = new FileService();
@@ -68,20 +64,6 @@ class TodoCommand extends Command
                 $this->printList($tasks);
                 break;
         }
-
-
-
-//
-//        $task = new Task();
-//        $task->setId(1);
-//        $task->setDescription('Ez is véget ér egyszer');
-//        $task->setCreationDate(date('c'));
-//        $task->setStatus('NEW');
-//        $fileService->saveTaskModels(array(
-//            $task,
-//        ));
-
-
 
     }
 
@@ -99,5 +81,45 @@ class TodoCommand extends Command
                 }
             }
         }
+    }
+
+    protected function createTask($options = array())
+    {
+
+        if (count($options) == 1) {
+            $taskService = new TaskService();
+            $task = $taskService->createTask($options[0]);
+            echo "Created task: id: " . $task->getId() . ' -> ' . $task->getDescription() . ": " . $task->getStatus() . "\n";
+            echo "__________________________\n";
+        } else {
+            echo 'Type only the task "description" for the create.';
+        }
+
+    }
+
+    protected function updateStatus($options = array())
+    {
+        if (!empty($options) && count($options) == 2 && is_numeric($options[0]) && $this->checkCorrectStatus($options[1])) {
+            $id = $options[0];
+            $status = $options[1];
+            $taskService = new TaskService();
+
+            if ($update = $taskService->updateTaskStatus($id, $status)) {
+                if (isset($update[3]) && $update[3]) {
+                    echo "Successfully update $update[0]: $update[1] --> $update[2]";
+                } else {
+                    echo "Update Fail $update[0]: $update[1] --> $update[2]";
+                }
+            } else {
+                echo 'Empty ID or Status';
+            }
+        } else {
+            echo 'Type the chosen task ID and the new STATUS. (Status could be "NEW"|"INPROGRESS"|"ONHOLD"|"DONE")';
+        }
+    }
+
+    private function checkCorrectStatus($status)
+    {
+        return ($status == "NEW" || $status == "INPROGRESS" || $status == "ONHOLD" || $status == "DONE");
     }
 }
