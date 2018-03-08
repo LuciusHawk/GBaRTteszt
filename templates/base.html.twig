@@ -3,14 +3,41 @@
 <head>
     <meta charset="UTF-8">
     <title>{% block title %}Welcome!{% endblock %}</title>
-    {% block stylesheets %}{% endblock %}
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    {% block stylesheets %}
+        <style>
+            table {
+                text-align: center;
+                width: 100%;
+            }
+        </style>
+    {% endblock %}
 </head>
 <body>
 <div style="text-align: center">
-Hali :)
+    <h3>Task log</h3>
 </div>
 {% block body %}
-
+    <table class="table table-striped">
+        <tr>
+            <th>ID</th>
+            <th>Action</th>
+            <th>Change</th>
+            <th>Date</th>
+        </tr>
+        {% for log in logs%}
+           <tr>
+               <td>{{ log.id }}</td>
+               <td>{{ log.action }}</td>
+               {% if log.change is empty %}
+               <td>-</td>
+               {% else %}
+               <td>{{ log.change }}</td>
+               {% endif %}
+               <td>{{ log.date|date('Y.m.d H:i:s') }}</td>
+           </tr>
+        {% endfor %}
+    </table>
 {% endblock %}
 {% block javascripts %}{% endblock %}
 </body>

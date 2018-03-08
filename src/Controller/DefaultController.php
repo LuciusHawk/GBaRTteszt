@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Helper\FormHelper;
+use App\Service\FileService;
 use App\Service\TableMaker;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
@@ -21,8 +22,10 @@ class DefaultController extends Controller
     public function index(Request $request)
     {
         // creates a task and gives it some dummy data for this example
+        $fileService = new FileService();
+        $logs = $fileService->getLogModels();
         return $this->render('base.html.twig', array(
-
+            'logs' => $logs
         ));
     }
 }

@@ -115,9 +115,8 @@ class FileService
     {
         $inp = file_get_contents($this->tasksFileName);
         $datas = json_decode($inp);
-        if(!empty($datas)) {
+        if (!empty($datas)) {
             $last = $datas[count($datas) - 1];
-            var_dump($last);
 
             return $last->id + 1;
         }
@@ -196,6 +195,35 @@ class FileService
         }
 
         return false;
+    }
+
+    /**
+     * @return array|mixed
+     */
+    public function getLogModels()
+    {
+        $datas = array();
+        if (file_exists($this->logFileName)) {
+            $inp = file_get_contents($this->logFileName);
+            $datas = json_decode($inp);
+        }
+        $logs = array();
+        if(!empty($datas)) {
+            foreach ($datas as $data) {
+                $data = $data[0];
+                $change = (isset($data->change)) ? $data->change : '';
+                $logs[] = [
+                    'id' => $data->id,
+                    'action' => $data->action,
+                    'change' => $change,
+                    'date' => $data->date,
+                ];
+            }
+        }
+
+        return $logs;
+
+
     }
 
 }
