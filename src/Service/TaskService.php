@@ -53,7 +53,7 @@ class TaskService extends Task
                 $fileService->updateTaskModelStatus($task);
                 return array($task->getId(), $originalTaskStatus, $task->getStatus(), true);
             }else {
-                return array($task->getId(), $originalTaskStatus, $task->getStatus(), false);
+                return array($task->getId(), $originalTaskStatus, $status, false);
             }
 
         }
