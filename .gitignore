@@ -11,5 +11,4 @@
 ###< symfony/web-server-bundle ###
 
 .idea/
-/data/tasks.json
 /data/log.json
